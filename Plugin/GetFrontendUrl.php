@@ -7,20 +7,20 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Support\Model\Report\Group\Modules\Modules;
+use Magento\Framework\Module\Manager;
 use Paytrail\PaymentService\Controller\Receipt\Index;
 
 class GetFrontendUrl
 {
     /**
      * @param QuoteIdMaskFactory $idMaskFactory
-     * @param Modules $modules
+     * @param Manager $moduleManager
      * @param ScopeConfigInterface $config
      * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         private readonly QuoteIdMaskFactory    $idMaskFactory,
-        private readonly Modules               $modules,
+        private readonly Manager               $moduleManager,
         private readonly ScopeConfigInterface  $config,
         private readonly StoreManagerInterface $storeManager
     ) {
@@ -38,7 +38,7 @@ class GetFrontendUrl
      */
     public function afterGetSuccessUrl(Index $subject, string $result, Order $order): string
     {
-        if ($this->modules->isModuleEnabled('Magento_UpwardConnector')) {
+        if ($this->moduleManager->isEnabled('Magento_UpwardConnector')) {
             $frontendBaseUrl = $this->storeManager->getStore($order->getStoreId())->getBaseUrl(
                 \Magento\Framework\UrlInterface::URL_TYPE_WEB,
                 true
@@ -67,7 +67,7 @@ class GetFrontendUrl
      */
     public function afterGetCartUrl(Index $subject, string $result, Order $order): string
     {
-        if ($this->modules->isModuleEnabled('Magento_UpwardConnector')) {
+        if ($this->moduleManager->isEnabled('Magento_UpwardConnector')) {
             $frontendBaseUrl = $this->storeManager->getStore($order->getStoreId())->getBaseUrl(
                 \Magento\Framework\UrlInterface::URL_TYPE_WEB,
                 true
